@@ -1,0 +1,55 @@
+
+Miller-Rabin Primality test
+
+Assumptions:
+        1: Let n be prime
+        2: n > 2
+        3: n is odd, if even then it is composite
+
+Given an odd number n, checking if n is a strong pseudoprime to several bases which are either chosen randomly or taken in a predetermined set, depending on the implementation. If n is not a strong pseudoprime to some of the chosen bases, n is proved to be composite. Conversely, Rabin has shown in that if n is a strong pseudoprime to k bases, it is "probably prime" with an error probability of less than 1/4 ^ k
+
+n = 104513 (prime)
+a = 3
+n-1 = 2^6 * 1633
+
+ 3^1633 ≡ 88958 (mod n)
+ 3^(2^1)*1633 ≡ 88958^2 ≡ 10430 (mod n)
+ 3^(2^2)*1633 ≡ 10430^2 ≡ 91380 (mod n)
+ 3^(2^3)*1633 ≡ 91380^2 ≡ 29239 (mod n)
+ 3^(2^4)*1633 ≡ 29239^2 ≡ 2781 (mod n)
+ 3^(2^5)*1633 ≡ 2781^2 ≡ −1 (mod n)
+
+The test concludes that n is a probable prime.
+
+Lemma 0.1:
+Suppose p is an odd prime. Let p − 1 = 2km where m is odd. Let 1 ≤ a < p. 
+Either i) a^m ≡ 1 (mod p) or ii) one of a^q, a^2m, a^4m, a^8m, . . . , a^2(k−1m) is conruent to −1 mod p.
+
+Proof: We know that (a^2(k−1m))^2= a^p−1 ≡ 1(mod n).
+Thus a^2(k−1m) ≡ ±1 (mod p). If a^2(k−1m) ≡ −1 (mod p) we are done. 
+Otherwise we proceed by induction.
+If each of
+a^2(i+1m), . . . , a^2(k−1m) is congruent to 1, then a^(2i)*m ≡ ±1. 
+It follows that if ii) fails, we must have am ≡ +-1 (mod p).
+Suppose we are given an odd number n and want to know if it prime. We could pick 1 ≤ a < n and calcuate
+a^q, a^2m, a^4m, a^8m, . . . , a^2(k−1m)mod n. 
+If neither i) nor ii) holds then we would know n is composite. In this case we say a is a witness that n is composite.
+If a is not a witness, this does not tell us that n is prime, but it gives us some evidence that n might be prime.
+If n is composite, most 1 < a < n will witness that it is composite.
+
+Theorem 0.2: 
+If n is composite, then at least 3/4 of numbers 1 < a < n witness that n is composite.
+This gives rise to a probabalistic algorithm for testing primality.
+
+Rabin-Miller Algorithm
+• Randomly pick a1, . . . , ak independent elements 1 < a < n.
+• For each ai do the test described above.
+• If any ai is a witness that n is composite, you know n is composite
+• If no ai is a witness, guess that n is prime.
+
+If you decide that n is composite, you will know that this is the correct
+answer. If you guess that n is prime, there is some chance that you were just
+unlucky. But if you guess that n is prime, the chance that you are wrong is less
+that (.25)k. If we took k = 100, then (.25)100 < 10−60. Taking k larger will
+increase our level of certainty further.
+

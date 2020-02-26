@@ -1,0 +1,12 @@
+host name: ip-172-31-80-9.ec2.internal
+IPv4 IP address: 172.31.80.9
+socket created [3]
+unable to bind to socket: Address already in use
+Table 'Contacts_T' already exists
+host name: ip-172-31-80-9.ec2.internal
+IPv4 IP address: 172.31.80.9
+socket created [3]
+bind returned success
+listen returned success
+waiting for connection ...
+accepted connection, socket [4]
