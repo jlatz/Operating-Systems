@@ -1,0 +1,60 @@
+By Brie Moore and John Latz
+
+Through our research of the C functions setjmp, longjmp, and mmap, we
+concluded that in order to jump into the code of an executable through a separate
+program, one must know the address in memory of the line of code that one wants to
+execute. To come to this conclusion, we experimented with the above functions in many
+ways. First, we experimented with mmap by creating a file named prog1 in which we
+declared a memory mapped area with the executable, prog2, that we created. In prog2,
+we simply have a print statement that says we are in that program. We then printed the
+pointer returned from mmap as a hex address and as a string in order to understand
+exactly what mmap was returning. After seeing the pointer interpreted as a string, which
+printed the word ELF, we realized that the pointer was returning the very beginning of
+the executable file, in the ELF header. In addition, we also realized that the flags for
+mmap needed to include the PROT_EXEC flag because we wanted to execute code
+within the memory mapped area. This new information was very compelling, so we
+decided to then try setjmp and longjmp to see what would happen.
+
+With setjmp and longjmp, we first tried them within our source file, prog1, to
+understand how they work. We tried them within main and a separate function to see
+how they returned and in what order. We then researched into how we could use setjmp
+and longjmp in separate files because we knew that longjmp would have to be executed
+in prog2 in order to return to prog1. We found that it was possible
+(https://stackoverflow.com/questions/11876995/use-jmp-buf-in-multiple-file), so we tried
+this. The problem still was that we could not execute the instructions in the executable
+as it was still pointing to the ELF header, and we had to compile prog1 and prog2 into
+one executable as we were using an extern buf variable. So, while this was cool that
+you could use setjmp and longjmp in different files, it still did not help us with our issue.
+We then attempted to abandon mmap to see if it was possible to use setjmp, longjmp,
+and execl, which would show that you could go into another file and return back.
+
+For this experiment, in prog1&#39;s main, we called setjmp in an if-else statement. In
+the if statement, setjmp was the condition and the else called a function in which we
+execl prog2 and used longjmp to return to main. This experiment worked as we printed
+the line in prog2 and returned to the section of main in prog1. Even though we used
+setjmp and longjmp solely in prog1, this confirmed that setjmp and longjmp do not
+interfere with other processes. After doing much research into executing an executable
+from mmap, we kept seeing that many people said you could not do this easily;
+however, we tried one more experiment. With this experiment, we mmapped to prog2
+before calling setjmp and the other function that called execl and longjmp. This
+experiment was the most compelling out of all of the previous. Our program printed the
+pointer as an address and string, called the function, but when it got to execl, it printed
+that the file was busy. We found this very interesting because it showed that prog2 was
+busy with mmap, which was weird because it just puts it into a new memory mapped
+area. We are still not sure why this occurred.
+
+After completing all of the above experiments, we still continued to research
+because we came to the conclusion that we needed to change the address that the
+mmap pointer was pointing to. The main function of prog2&#39;s address is obviously not at
+the beginning of the ELF file, but deeper within. We then found an article
+(https://stackoverflow.com/questions/12409908/invoking-a-function-main-from-a-binary-
+file-in-c) that one needs to parse the ELF file until one finds main&#39;s address. If one then
+uses that with mmap, the file should execute. However, many people stated that this
+was not the correct use of mmap and there were many easier ways to jump into another
+file from a source file. So, while we did find a very complicated solution to our problem
+that could possibly be done, it was not a simple solution. However, we learned a lot
+from experimenting and have a better understanding of mmap, setjmp, and longjmp.
+
+*all experimenting code is in this folder
+
+
